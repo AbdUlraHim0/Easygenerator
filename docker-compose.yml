@@ -19,7 +19,7 @@ services:
       - "5000:5000"
     environment:
       - NODE_ENV=development
-      - MONGO_URI=mongodb://mongo:27017/your-db
+      - MONGO_URI=mongodb://mongo:27017/easygenerators
       - JWT_SECRET=your_jwt_secret
     volumes:
       - ./server:/app
