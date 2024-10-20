@@ -1,23 +1,8 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useForm } from "@tanstack/react-form";
 import { zodValidator } from "@tanstack/zod-form-adapter";
-import { z } from "zod";
 import { useState } from "react";
-
-// Define Zod schema for validation
-const signUpSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/[a-zA-Z]/, "Password must contain at least 1 letter")
-    .regex(/\d/, "Password must contain at least 1 number")
-    .regex(
-      /[!@#$%^&*(),.?":{}|<>]/,
-      "Password must contain at least 1 special character"
-    ),
-});
+import { signUpSchema } from "../schemas";
 
 export const Route = createLazyFileRoute("/sign-up")({
   component: SignUp,

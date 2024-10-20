@@ -1,14 +1,8 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { useForm } from "@tanstack/react-form";
 import { zodValidator } from "@tanstack/zod-form-adapter";
-import { z } from "zod";
 import { useState } from "react";
-
-// Define Zod schema for validation
-const signInSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password is required"),
-});
+import { signInSchema } from "../schemas";
 
 export const Route = createLazyFileRoute("/sign-in")({
   component: SignIn,
@@ -17,7 +11,6 @@ export const Route = createLazyFileRoute("/sign-in")({
 function SignIn() {
   const [submitError, setSubmitError] = useState("");
 
-  // Create a form using TanStack Form with Zod validation
   const form = useForm({
     defaultValues: {
       email: "",
