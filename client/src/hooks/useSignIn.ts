@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import axiosInstance from "../services/axios-instance";
 import { useAuthStore } from "../store/auth.store";
-import { useAuth } from "../auth/auth";
 
 interface SignInData {
   email: string;
@@ -13,28 +12,26 @@ const signIn = async (data: SignInData) => {
 
   const accessToken = response.headers["authorization"]?.replace("Bearer ", "");
   const refreshToken = response.headers["refresh-token"];
-  console.log("headers", response.headers);
+  const user = data.email;
 
   if (!accessToken || !refreshToken) {
     throw new Error("Failed to retrieve tokens from response headers.");
   }
 
-  return { accessToken, refreshToken, user: data.email };
+  return { accessToken, refreshToken, user };
 };
 
 export const useSignIn = () => {
-  const { setToken, clearToken, setRefreshToken } = useAuthStore();
-  const { login } = useAuth();
+  const { setToken, setRefreshToken, setUser } = useAuthStore();
 
   return useMutation({
     mutationFn: signIn,
     onSuccess: ({ accessToken, refreshToken, user }) => {
       setToken(accessToken);
       setRefreshToken(refreshToken);
-      login(user);
+      setUser(user);
     },
     onError: (error) => {
-      clearToken();
       console.error("Error signing in:", error);
     },
   });

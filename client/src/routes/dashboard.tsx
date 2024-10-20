@@ -1,9 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { useAuth } from "../auth/auth";
 
 export const Route = createFileRoute("/dashboard")({
-  component: DashboardComponent,
-});
+  beforeLoad: () => {
+    const { isAuthenticated } = useAuth();
 
-function DashboardComponent() {
-  return <div>Welcome to the Dashboard!</div>;
-}
+    if (!isAuthenticated) {
+      throw redirect({ to: "/sign-in" });
+    }
+  },
+  component: () => <div>Welcome to the Dashboard!</div>,
+});

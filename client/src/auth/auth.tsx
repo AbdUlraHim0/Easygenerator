@@ -1,6 +1,7 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, ReactNode, useContext } from "react";
+import { useAuthStore } from "../store/auth.store";
 
-export interface IAuthContext {
+interface IAuthContext {
   isAuthenticated: boolean;
   user: string | null;
   login: (username: string) => void;
@@ -10,19 +11,23 @@ export interface IAuthContext {
 const AuthContext = createContext<IAuthContext | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<string | null>(localStorage.getItem("user"));
-  const isAuthenticated = !!user;
+  const {
+    user,
+    isAuthenticated,
+    setToken,
+    setRefreshToken,
+    setUser,
+    clearAuth,
+  } = useAuthStore();
 
   const login = (username: string) => {
-    localStorage.setItem("user", username);
     setUser(username);
+    setToken("your-access-token"); // Simulate setting a token
+    setRefreshToken("your-refresh-token");
   };
 
   const logout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    localStorage.removeItem("refresh-token");
-    setUser(null);
+    clearAuth();
   };
 
   return (

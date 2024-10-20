@@ -5,6 +5,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { signUpSchema } from "../schemas";
 import { useSignUp } from "../hooks/useSignup";
+import { PasswordToggleIcon } from "../svg/PasswordToggleIcon";
 
 export const Route = createLazyFileRoute("/sign-up")({
   component: SignUp,
@@ -12,6 +13,7 @@ export const Route = createLazyFileRoute("/sign-up")({
 
 function SignUp() {
   const [submitError, setSubmitError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const signUpMutation = useSignUp();
   const navigate = useNavigate();
 
@@ -120,7 +122,7 @@ function SignUp() {
             />
           </div>
 
-          <div>
+          <div className="relative">
             <form.Field
               name="password"
               children={(field) => (
@@ -131,15 +133,21 @@ function SignUp() {
                   >
                     Password
                   </label>
-                  <input
-                    id={field.name}
-                    type="password"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    required
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
+                  <div className="relative">
+                    <input
+                      id={field.name}
+                      type={showPassword ? "text" : "password"}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      required
+                      className="block w-full rounded-md border-0 py-1.5 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
+                    <PasswordToggleIcon
+                      show={showPassword}
+                      onClick={() => setShowPassword(!showPassword)}
+                    />
+                  </div>
                   {field.state.meta.isTouched &&
                     field.state.meta.errors.length > 0 && (
                       <em className="text-red-500">
