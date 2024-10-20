@@ -28,6 +28,7 @@ export class AuthenticationController {
     return this.authService.refreshTokens(refreshTokenDto);
   }
 
+  @Auth(AuthType.Bearer)
   @HttpCode(HttpStatus.OK)
   @Post('sign-out')
   signOut(@Body() refreshTokenDto: RefreshTokenDto) {

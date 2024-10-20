@@ -41,6 +41,7 @@ export class AuthenticationService {
       }
 
       const user = new this.userModel({
+        mame: signUpDto.name,
         email: signUpDto.email,
         password: await this.hashingService.hash(signUpDto.password),
       });
