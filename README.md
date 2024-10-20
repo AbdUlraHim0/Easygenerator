@@ -21,6 +21,8 @@ Choose one of the following methods:
 
 ### 2. Build and Run the Containers
 
+- cd Easygenerator
+
 From the root directory, run:
 
 ```bash
