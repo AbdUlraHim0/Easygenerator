@@ -34,8 +34,8 @@ export class AuthenticationController {
     const { accessToken, refreshToken } =
       await this.authService.signIn(signInDto);
 
-    res.setHeader('Authorization', `Bearer ${accessToken}`);
-    res.setHeader('Refresh-Token', refreshToken);
+    res.setHeader('authorization', `Bearer ${accessToken}`);
+    res.setHeader('refresh-token', refreshToken);
 
     return { message: 'Signed in successfully' };
   }
@@ -49,8 +49,8 @@ export class AuthenticationController {
     const { accessToken, refreshToken } =
       await this.authService.refreshTokens(refreshTokenDto);
 
-    res.setHeader('Authorization', `Bearer ${accessToken}`);
-    res.setHeader('Refresh-Token', refreshToken);
+    res.setHeader('authorization', `Bearer ${accessToken}`);
+    res.setHeader('refresh-token', refreshToken);
 
     res.json({ message: 'Tokens refreshed successfully' });
   }
@@ -64,7 +64,7 @@ export class AuthenticationController {
   ) {
     await this.authService.signOut(refreshTokenDto);
 
-    res.setHeader('Refresh-Token', '');
+    res.setHeader('refreshToken', '');
 
     res.json({ message: 'User signed out successfully' });
   }

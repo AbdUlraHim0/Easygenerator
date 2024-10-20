@@ -18,6 +18,7 @@ async function bootstrap() {
   app.enableCors({
     origin: process.env.CLIENT_URL,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    exposedHeaders: ['Authorization', 'refresh-token'],
   });
 
   setupPlugins(app);

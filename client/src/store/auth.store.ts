@@ -1,17 +1,29 @@
 import { create } from "zustand";
 
 interface AuthState {
-  accessToken: string | null;
+  token: string | null;
   refreshToken: string | null;
-  setAccessToken: (token: string) => void;
+  isAuthenticated: boolean;
+  setToken: (token: string) => void;
   setRefreshToken: (token: string) => void;
-  clearTokens: () => void;
+  clearToken: () => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  accessToken: null,
-  refreshToken: null,
-  setAccessToken: (token) => set({ accessToken: token }),
-  setRefreshToken: (token) => set({ refreshToken: token }),
-  clearTokens: () => set({ accessToken: null, refreshToken: null }),
+  token: localStorage.getItem("token"),
+  refreshToken: localStorage.getItem("refresh-token"),
+  isAuthenticated: !!localStorage.getItem("token"),
+  setToken: (token: string) => {
+    localStorage.setItem("token", token);
+    set({ token, isAuthenticated: true });
+  },
+  setRefreshToken: (token: string) => {
+    localStorage.setItem("refresh-token", token);
+    set({ refreshToken: token });
+  },
+  clearToken: () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("refresh-token");
+    set({ token: null, refreshToken: null, isAuthenticated: false });
+  },
 }));

@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
-import { useAuthStore } from "../store/auth.store";
 import axiosInstance from "../services/axios-instance";
+import { useAuthStore } from "../store/auth.store";
+import { useAuth } from "../auth/auth";
 
 interface SignInData {
   email: string;
@@ -10,30 +11,31 @@ interface SignInData {
 const signIn = async (data: SignInData) => {
   const response = await axiosInstance.post("/authentication/sign-in", data);
 
-  // Use lowercase for headers and check if they exist before splitting
-  const accessTokenHeader = response.headers["authorization"];
+  const accessToken = response.headers["authorization"]?.replace("Bearer ", "");
   const refreshToken = response.headers["refresh-token"];
+  console.log("headers", response.headers);
 
-  if (accessTokenHeader) {
-    const accessToken = accessTokenHeader.split(" ")[1];
-    useAuthStore.getState().setAccessToken(accessToken);
+  if (!accessToken || !refreshToken) {
+    throw new Error("Failed to retrieve tokens from response headers.");
   }
 
-  if (refreshToken) {
-    useAuthStore.getState().setRefreshToken(refreshToken);
-  }
-
-  return response.data;
+  return { accessToken, refreshToken, user: data.email };
 };
 
 export const useSignIn = () => {
+  const { setToken, clearToken, setRefreshToken } = useAuthStore();
+  const { login } = useAuth();
+
   return useMutation({
     mutationFn: signIn,
-    onError: (error: any) => {
-      console.error("Error signing in:", error);
+    onSuccess: ({ accessToken, refreshToken, user }) => {
+      setToken(accessToken);
+      setRefreshToken(refreshToken);
+      login(user);
     },
-    onSuccess: (data) => {
-      console.log("Signed in successfully:", data);
+    onError: (error) => {
+      clearToken();
+      console.error("Error signing in:", error);
     },
   });
 };

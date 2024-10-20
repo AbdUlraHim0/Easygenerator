@@ -5,6 +5,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { signInSchema } from "../schemas";
 import { useSignIn } from "../hooks/useSignIn";
+import { PasswordToggleIcon } from "../svg/PasswordToggleIcon";
 
 export const Route = createLazyFileRoute("/sign-in")({
   component: SignIn,
@@ -12,6 +13,7 @@ export const Route = createLazyFileRoute("/sign-in")({
 
 function SignIn() {
   const [submitError, setSubmitError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const signInMutation = useSignIn();
   const navigate = useNavigate();
 
@@ -26,8 +28,9 @@ function SignIn() {
         setSubmitError("");
         toast.success("Signed in successfully!");
         form.reset();
-        navigate({ to: "/" });
+        navigate({ to: "/dashboard" });
       } catch (error: any) {
+        console.log(error);
         setSubmitError(error.message || "Failed to sign in. Please try again.");
         toast.error(error.message || "Failed to sign in. Please try again.");
       }
@@ -55,6 +58,8 @@ function SignIn() {
           className="space-y-6"
           onSubmit={(e) => {
             e.preventDefault();
+            e.persist();
+
             form.handleSubmit();
           }}
         >
@@ -89,7 +94,7 @@ function SignIn() {
             />
           </div>
 
-          <div>
+          <div className="relative">
             <form.Field
               name="password"
               children={(field) => (
@@ -100,15 +105,21 @@ function SignIn() {
                   >
                     Password
                   </label>
-                  <input
-                    id={field.name}
-                    type="password"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    required
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
+                  <div className="relative">
+                    <input
+                      id={field.name}
+                      type={showPassword ? "text" : "password"}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      required
+                      className="block w-full rounded-md border-0 py-1.5 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
+                    <PasswordToggleIcon
+                      show={showPassword}
+                      onClick={() => setShowPassword(!showPassword)}
+                    />
+                  </div>
                   {field.state.meta.isTouched &&
                     field.state.meta.errors.length > 0 && (
                       <em className="text-red-500">
