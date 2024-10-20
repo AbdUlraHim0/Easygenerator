@@ -1,8 +1,10 @@
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm } from "@tanstack/react-form";
 import { zodValidator } from "@tanstack/zod-form-adapter";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { signUpSchema } from "../schemas";
+import { useSignUp } from "../hooks/useSignup";
 
 export const Route = createLazyFileRoute("/sign-up")({
   component: SignUp,
@@ -10,6 +12,8 @@ export const Route = createLazyFileRoute("/sign-up")({
 
 function SignUp() {
   const [submitError, setSubmitError] = useState("");
+  const signUpMutation = useSignUp();
+  const navigate = useNavigate();
 
   const form = useForm({
     defaultValues: {
@@ -18,11 +22,20 @@ function SignUp() {
       password: "",
     },
     onSubmit: async ({ value }) => {
-      console.log("Form submitted", value);
-      setSubmitError("");
+      try {
+        await signUpMutation.mutateAsync(value);
+        setSubmitError("");
+        toast.success("Signed up successfully! Please Log In");
+        form.reset();
+        navigate({ to: "/sign-in" });
+      } catch (error: any) {
+        setSubmitError(error.message);
+        toast.error(error.message || "Failed to sign up. Please try again.");
+      }
     },
     onSubmitInvalid: (error: any) => {
       setSubmitError(error.message);
+      toast.error("Invalid form submission. Please check your inputs.");
     },
     validatorAdapter: zodValidator(),
     validators: {

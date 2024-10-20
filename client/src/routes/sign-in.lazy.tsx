@@ -1,8 +1,10 @@
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm } from "@tanstack/react-form";
 import { zodValidator } from "@tanstack/zod-form-adapter";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { signInSchema } from "../schemas";
+import { useSignIn } from "../hooks/useSignIn";
 
 export const Route = createLazyFileRoute("/sign-in")({
   component: SignIn,
@@ -10,6 +12,8 @@ export const Route = createLazyFileRoute("/sign-in")({
 
 function SignIn() {
   const [submitError, setSubmitError] = useState("");
+  const signInMutation = useSignIn();
+  const navigate = useNavigate();
 
   const form = useForm({
     defaultValues: {
@@ -17,11 +21,20 @@ function SignIn() {
       password: "",
     },
     onSubmit: async ({ value }) => {
-      console.log("Sign In submitted", value);
-      setSubmitError("");
+      try {
+        await signInMutation.mutateAsync(value);
+        setSubmitError("");
+        toast.success("Signed in successfully!");
+        form.reset();
+        navigate({ to: "/" });
+      } catch (error: any) {
+        setSubmitError(error.message || "Failed to sign in. Please try again.");
+        toast.error(error.message || "Failed to sign in. Please try again.");
+      }
     },
-    onSubmitInvalid: (error) => {
-      setSubmitError(error.value.password);
+    onSubmitInvalid: () => {
+      setSubmitError("Form validation failed");
+      toast.error("Invalid form submission. Please check your inputs.");
     },
     validatorAdapter: zodValidator(),
     validators: {
@@ -112,7 +125,7 @@ function SignIn() {
             children={([canSubmit, isSubmitting]) => (
               <button
                 type="submit"
-                disabled={!canSubmit}
+                disabled={!canSubmit || isSubmitting}
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 {isSubmitting ? "..." : "Sign in"}

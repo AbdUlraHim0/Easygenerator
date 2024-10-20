@@ -6,7 +6,7 @@ import TanStackRouterVite from "@tanstack/router-plugin/vite";
 export default defineConfig({
   plugins: [react(), TanStackRouterVite()],
   server: {
-    host: "0.0.0.0.",
+    host: "0.0.0.0",
     port: 3000,
   },
 });
