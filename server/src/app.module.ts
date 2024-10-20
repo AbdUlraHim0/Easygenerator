@@ -3,14 +3,16 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule, LoggerModule } from 'common/common';
 import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { RedisModule } from 'common/common/redis/redis.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     LoggerModule,
     DatabaseModule,
-    ConfigModule.forRoot({ isGlobal: true }),
-    AuthModule,
+    RedisModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
