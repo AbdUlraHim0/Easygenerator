@@ -17,6 +17,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: process.env.CLIENT_URL,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   });
 
   setupPlugins(app);
@@ -26,6 +27,8 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT') || 5000;
+
+  await app.listen(port);
 
   app
     .get(Logger)
