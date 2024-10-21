@@ -27,3 +27,5 @@ From the root directory, run:
 
 ```bash
 docker-compose up --build
+
+### Navigate  to http://localhost:3000
